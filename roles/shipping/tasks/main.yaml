@@ -1,0 +1,62 @@
+  - name: installing maven
+    package:
+      name: "{{ item }}"
+      state: present
+    loop:
+    - maven
+    - mysql
+  - name: creating roboshop system user
+    user:
+     name: roboshop
+     comment: roboshop systemuser
+     system: true
+     home: /app
+     shell: /sbin/nologin
+  - name: deleting the directory
+    file:
+      path: /app
+      state: absent
+  - name: deleting temp directory
+    file:
+      path: /tmp/shipping.zip
+      state: absent
+  - name: creating directory
+    file:
+      path: /app
+      state: directory
+  - name: downloading file
+    get_url:
+     url: https://roboshop-artifacts.s3.amazonaws.com/shipping-v3.zip
+     dest: /tmp/shipping.zip
+  - name: extracting the file
+    unarchive:
+     src: /tmp/shipping.zip
+     dest: /app
+     remote_src: yes
+  - name: packageing the application
+    command: mvn clean package 
+    args:
+      chdir: /app
+  - name: moving the jar file
+    command: mv target/shipping-1.0.jar shipping.jar 
+    args:
+      chdir: /app
+  - name: copying service file
+    template:
+      src: shipping.service.j2
+      dest: /etc/systemd/system/shipping.service
+  - name: load schema
+    shell: mysql -h {{ MYSQL_HOST }} -uroot -pRoboShop@1 < /app/db/schema.sql
+  - name: load app-user
+    shell: mysql -h {{ MYSQL_HOST }} -uroot -pRoboShop@1 < /app/db/app-user.sql 
+  - name: load mster data
+    shell: mysql -h {{ MYSQL_HOST }} -uroot -pRoboShop@1 < /app/db/master-data.sql
+  - name: daemon reload shipping
+    systemd_service:
+      name: shipping
+      daemon_reload: true
+  - name: starting and enabling shipping
+    service:
+      name: shipping
+      state: restarted
+      enabled: yes
