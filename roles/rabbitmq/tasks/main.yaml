@@ -15,7 +15,7 @@
     enabled: yes
 
 - name: creating user
-  command: rabbitmqctl add_user roboshop roboshop123
+  command: rabbitmqctl add_user roboshop "{{ rabbitmq_password }}"
 
 - name: giving permissions
   command: rabbitmqctl set_permissions -p / roboshop ".*" ".*" ".*"
