@@ -1,0 +1,38 @@
+  - name: Disable default nginx
+    command: dnf module disable nginx -y
+  - name: Enable required nginx
+    command: dnf module enable nginx:1.24 -y
+  - name: installing nginx
+    package: 
+      name: nginx
+      state: present
+  - name: removing default content
+    file:
+      path: /usr/share/nginx/html/*
+      state: absent
+  - name: deleting temp directory
+    file:
+      path: /tmp/payment.zip
+      state: absent
+  - name: downloading frontend content
+    get_url:
+      url: https://roboshop-artifacts.s3.amazonaws.com/frontend.zip
+      dest: /tmp/frontend.zip
+  - name: extracting the content
+    unarchive:
+      src: /tmp/frontend.zip
+      dest: /usr/share/nginx/html
+      remote_src: yes
+  - name: copying nginx config file
+    template:
+      src: frontend.j2
+      dest: /etc/nginx/nginx.conf
+  - name: daemon reload
+    systemd_service:
+      name: nginx
+      daemon_reload: true
+  - name: start & enable nginx
+    service:
+      name: nginx
+      state: restarted
+      enabled: yes
