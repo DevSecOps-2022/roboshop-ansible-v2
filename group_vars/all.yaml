@@ -1,0 +1,11 @@
+ansible_user: ec2-user
+ansible_password: DevOps321
+MONGODB_HOST: mongo.chinnimaha.online
+REDIS_HOST: redis.chinnimaha.online
+CATALOGUE_HOST: catalouge.chinnimaha.online
+CART_HOST: cart.chinnimaha.online
+MYSQL_HOST: mysql.chinnimaha.online
+USER_HOST: user.chinnimaha.online
+RABBITMQ_HOST: rabbitmq.chinnimaha.online
+SHIPPING_HOST: shipping.chinnimaha.online
+PAYMENT_HOST: payment.chinnimaha.online
