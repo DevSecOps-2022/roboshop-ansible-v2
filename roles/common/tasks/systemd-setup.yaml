@@ -2,7 +2,7 @@
   systemd_service:
     name: "{{ component }}"
     daemon_reload: true
-- name: start & enable catalouge
+- name: "start & enable {{ component }}"
   service:
     name: "{{ component }}"
     state: restarted
