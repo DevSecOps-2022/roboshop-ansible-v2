@@ -1,53 +1,15 @@
-  - name: installing python3 gcc python3-devel
-    package:
-      name: "{{ item }}"
-      state: present
-    loop:
-    - python3
-    - gcc
-    - python3-devel
-  - name: creating roboshop system user
-    user: 
-     name: roboshop
-     comment: roboshop systemuser
-     system: true
-     home: /app
-     shell: /sbin/nologin
-  - name: deleting the directory
-    file:
-      path: /app
-      state: absent
-  - name: deleting temp directory
-    file:
-      path: /tmp/payment.zip
-      state: absent
-  - name: creating directory
-    file:
-      path: /app
-      state: directory
-  - name: downloading file
-    get_url:
-     url: https://roboshop-artifacts.s3.amazonaws.com/payment-v3.zip
-     dest: /tmp/payment.zip
-  - name: extracting the file
-    unarchive:
-     src: /tmp/payment.zip
-     dest: /app
-     remote_src: yes
-  - name: downloading the dependencies
-    command: pip3 install -r requirements.txt
-    args:
-      chdir: /app
+  - name: configuring app setup
+    import_role:
+      name: common
+      tasks_from: app_setup.yaml
+
   - name: copying service file
     template:
       src: payment.service.j2
       dest: /etc/systemd/system/payment.service
-  - name: daemon reload
-    systemd_service:
-     name: payment
-     daemon_reload: true
-  - name: start & enable payment
-    service:
-     name: payment
-     state: restarted
-     enabled: yes
+
+  - name: configuring systemd services
+    import_role:
+      name: common
+      tasks_from: systemd-setup.yaml
+  

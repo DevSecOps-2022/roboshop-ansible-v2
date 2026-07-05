@@ -1,0 +1,13 @@
+  - name: installing python3 gcc python3-devel
+    package:
+      name: "{{ item }}"
+      state: present
+    loop:
+    - python3
+    - gcc
+    - python3-devel
+  
+  - name: downloading the dependencies
+    command: pip3 install -r requirements.txt
+    args:
+      chdir: /app
