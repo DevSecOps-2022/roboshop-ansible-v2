@@ -1,12 +1,12 @@
 - name: Installing nodejs & dependecies
   import_role:
     name: common
-    Tasks_from: java.yaml
+    tasks_from: java.yaml
 
 - name: Configuring app setup
   import_role:
     name: common
-    Tasks_from: app_setup.yaml
+    tasks_from: app_setup.yaml
 
 - name: copy catalouge service
   template:
@@ -40,4 +40,4 @@
 - name: Configuring systemd services
   import_role:
     name: common
-    Tasks_from: systemd-setup.yaml
+    tasks_from: systemd-setup.yaml
