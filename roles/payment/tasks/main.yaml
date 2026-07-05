@@ -3,6 +3,11 @@
       name: common
       tasks_from: app_setup.yaml
 
+  - name: python dependencies
+    import_role:
+      name: common
+      tasks_from: python.yaml
+      
   - name: copying service file
     template:
       src: payment.service.j2
