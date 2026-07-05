@@ -1,12 +1,12 @@
-- name: Installing nodejs & dependecies
-  import_role:
-    name: common
-    tasks_from: java.yaml
-
 - name: Configuring app setup
   import_role:
     name: common
     tasks_from: app_setup.yaml
+
+- name: Installing nodejs & dependecies
+  import_role:
+    name: common
+    tasks_from: java.yaml
 
 - name: copy catalouge service
   template:
