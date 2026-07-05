@@ -27,12 +27,9 @@
     template:
       src: frontend.j2
       dest: /etc/nginx/nginx.conf
+    notify:
+      - restart nginx
   - name: daemon reload
     systemd_service:
       name: nginx
       daemon_reload: true
-  - name: start & enable nginx
-    service:
-      name: nginx
-      state: restarted
-      enabled: yes
