@@ -1,53 +1,16 @@
-- name: disable default nodejs
-  command: dnf module disable nodejs -y
-- name: enable required nodejs
-  command: dnf module enable nodejs:20 -y
-- name: Installing nodejs
-  package:
-    name: nodejs
-    state: present
-- name: creating roboshop system user
-  user:
-    name: roboshop
-    comment: roboshop systemuser 
-    system: true
-    home: /app
-    shell: /sbin/nologin
-- name: deleting the directory
-  file:
-    path: /app
-    state: absent
-- name: deleting temp directory
-  file:
-    path: /tmp/user.zip
-    state: absent
-- name: creating directory
-  file:
-    path: /app
-    state: directory
-- name: downloading file
-  get_url:
-    url: https://roboshop-artifacts.s3.amazonaws.com/user-v3.zip 
-    dest: /tmp/user.zip
-- name: extracting the file
-  unarchive:
-    src: /tmp/user.zip
-    dest: /app
-    remote_src: yes
-- name: installing dependencies
-  command: npm install
-  args:
-    chdir: /app
+- name: Installing nodejs & dependecies
+  import_role:
+    name: common
+    tasks_from: java.yaml
+- name: configuring app setup
+  import_role:
+    name: common
+    tasks_from: app_setup.yaml
 - name: copying service file
   template:
     src: user.service.j2
     dest: /etc/systemd/system/user.service
-- name: daemon reload
-  systemd_service:
-    name: user
-    daemon_reload: true
-- name: start & enable user
-  service:
-    name: user
-    state: restarted
-    enabled: yes
+- name: configuring systemd services
+  import_role:
+    name: common
+    tasks_from: systemd-setup.yaml
