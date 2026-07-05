@@ -1,0 +1,30 @@
+- name: craete robshop system user
+  user: 
+    name: roboshop
+    comment: roboshop systemuser 
+    system: true
+    home: /app
+    shell: /sbin/nologin
+- name: remove app directory
+  file: 
+    path: /app
+    state: absent
+- name: remove file
+  file:
+    path: "/tmp/{{ component }}.zip"
+    state: absent
+- name: creating directory
+  file:
+    path: /app
+    state: directory
+- name: downloading file
+  get_url:
+    url: "https://roboshop-artifacts.s3.amazonaws.com/{{ component }}-v3.zip"
+    dest: "/tmp/{{ component }}.zip"
+- name: extracting the file
+  unarchive:
+    src: "/tmp/{{ component }}.zip"
+    dest: /app
+    remote_src: yes
+
+    

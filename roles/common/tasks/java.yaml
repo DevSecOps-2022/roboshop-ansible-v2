@@ -1,0 +1,14 @@
+- name: disabling nodejs
+  command: dnf module disable nodejs -y
+- name: enableing node js
+  command: dnf module enable nodejs:20 -y
+- name: insatlling nodejs
+  package:
+    name: nodejs
+    state: present
+# - name: changing the directory
+#   command: cd /app
+- name: installing the npm
+  command: npm install
+  args: 
+    chdir: /app 

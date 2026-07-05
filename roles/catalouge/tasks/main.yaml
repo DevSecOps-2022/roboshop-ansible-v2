@@ -1,45 +1,13 @@
-- name: disabling nodejs
-  command: dnf module disable nodejs -y
-- name: enableing node js
-  command: dnf module enable nodejs:20 -y
-- name: insatlling nodejs
-  package:
-    name: nodejs
-    state: present
-- name: craete robshop system user
-  user: 
-    name: roboshop
-    comment: roboshop systemuser 
-    system: true
-    home: /app
-    shell: /sbin/nologin
-- name: remove app directory
-  file: 
-    path: /app
-    state: absent
-- name: remove file
-  file:
-    path: /tmp/catalouge.zip
-    state: absent
-- name: creating directory
-  file:
-    path: /app
-    state: directory
-- name: downloading file
-  get_url:
-    url: https://roboshop-artifacts.s3.amazonaws.com/catalogue-v3.zip
-    dest: /tmp/catalouge.zip
-- name: extracting the file
-  unarchive:
-    src: /tmp/catalouge.zip
-    dest: /app
-    remote_src: yes
-# - name: changing the directory
-#   command: cd /app
-- name: installing the npm
-  command: npm install
-  args: 
-    chdir: /app 
+- name: Installing nodejs & dependecies
+  import_role:
+    name: common
+    Tasks_from: java.yaml
+
+- name: Configuring app setup
+  import_role:
+    name: common
+    Tasks_from: app_setup.yaml
+
 - name: copy catalouge service
   template:
     src: catalouge.service.j2
@@ -69,12 +37,7 @@
     - mongodb
 # - name: load the data into database
 #   shell: mongosh --host {{ MONGODB_HOST }} </app/db/master-data.js
-- name: daemon reload
-  systemd_service:
-    name: catalouge
-    daemon_reload: true
-- name: start & enable catalouge
-  service:
-    name: catalogue
-    state: restarted
-    enabled: yes
+- name: Configuring systemd services
+  import_role:
+    name: common
+    Tasks_from: systemd-setup.yaml
